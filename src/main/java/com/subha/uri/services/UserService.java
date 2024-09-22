@@ -1,10 +1,8 @@
 package com.subha.uri.services;
 
-import com.subha.uri.domain.dto.AuthenticationDto;
 import com.subha.uri.domain.entities.User;
 import com.subha.uri.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

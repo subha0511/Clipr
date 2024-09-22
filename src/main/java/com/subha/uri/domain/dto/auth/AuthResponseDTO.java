@@ -1,5 +1,6 @@
-package com.subha.uri.domain.dto;
+package com.subha.uri.domain.dto.auth;
 
+import com.subha.uri.domain.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthenticationDto {
+public class AuthResponseDTO {
 
-    private UserDto user;
+    private UserDTO user;
 
     private String token;
     

@@ -6,6 +6,7 @@ import com.subha.uri.repository.UrlRepository;
 import com.subha.uri.repository.UserRepository;
 import com.subha.uri.utils.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class UrlService {
         return urlRepository.findById(id);
     }
 
+    @Cacheable(value = "urls", key = "#hash")
     public Optional<Url> getByHash(String hash) {
         return urlRepository.findFirstByHash(hash);
     }

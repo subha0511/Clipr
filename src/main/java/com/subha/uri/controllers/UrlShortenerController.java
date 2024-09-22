@@ -1,6 +1,6 @@
 package com.subha.uri.controllers;
 
-import com.subha.uri.domain.dto.UrlDto;
+import com.subha.uri.domain.dto.UrlDTO;
 import com.subha.uri.domain.entities.Url;
 import com.subha.uri.mappers.Mapper;
 import com.subha.uri.services.JwtService;
@@ -27,10 +27,10 @@ public class UrlShortenerController {
     private JwtService jwtService;
 
     @Autowired
-    private Mapper<Url, UrlDto> urlMapper;
+    private Mapper<Url, UrlDTO> urlMapper;
 
     @GetMapping(path = "/")
-    public List<UrlDto> getAllUrl(@RequestHeader("Authorization") String bearerToken,
+    public List<UrlDTO> getAllUrl(@RequestHeader("Authorization") String bearerToken,
                                   @RequestParam(defaultValue = "0") final Integer pageNumber,
                                   @RequestParam(defaultValue = "5") final Integer size) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
@@ -43,19 +43,19 @@ public class UrlShortenerController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<UrlDto> createUrl(@RequestHeader("Authorization") String bearerToken,
-                                            @RequestBody UrlDto urlDto) {
+    public ResponseEntity<UrlDTO> createUrl(@RequestHeader("Authorization") String bearerToken,
+                                            @RequestBody UrlDTO urlDto) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
         Url url = urlMapper.mapFrom(urlDto);
         Url newUrl = urlService.save(url,userId);
-        return new ResponseEntity<UrlDto>(urlMapper.mapTo(newUrl), HttpStatus.CREATED);
+        return new ResponseEntity<UrlDTO>(urlMapper.mapTo(newUrl), HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getUrl(@PathVariable("id") Long id) {
         Optional<Url> urlFound = urlService.getById(id);
         return urlFound.map(url -> {
-                    UrlDto urlDto = urlMapper.mapTo(url);
+                    UrlDTO urlDto = urlMapper.mapTo(url);
                     return new ResponseEntity<>(urlDto, HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

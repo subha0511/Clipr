@@ -1,8 +1,10 @@
 package com.subha.uri.controllers;
 
-import com.subha.uri.domain.dto.AuthenticationDto;
-import com.subha.uri.domain.entities.User;
+import com.subha.uri.domain.dto.auth.AuthRequestDTO;
+import com.subha.uri.domain.dto.auth.AuthResponseDTO;
 import com.subha.uri.domain.entities.Token;
+import com.subha.uri.domain.entities.User;
+import com.subha.uri.mappers.impl.AuthMapper;
 import com.subha.uri.mappers.impl.UserMapper;
 import com.subha.uri.repository.TokenRepository;
 import com.subha.uri.services.JwtService;
@@ -10,6 +12,7 @@ import com.subha.uri.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -39,22 +42,29 @@ public class AuthController {
     private UserMapper userMapper;
 
     @Autowired
+    private AuthMapper authMapper;
+
+    @Autowired
     private TokenRepository tokenRepository;
 
     @Value("${cookie.token.expiration}")
     private int tokenExpiration;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<?> register(@Valid @RequestBody AuthRequestDTO authRequestDTO,
+                                      HttpServletResponse response) {
+        User user = authMapper.mapFrom(authRequestDTO);
         if (userService.userExists(user)) {
-            return new ResponseEntity<>("User Already Exists", HttpStatus.CONFLICT);
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("message", "User Already Exists");
+            return new ResponseEntity<>(responseBody, HttpStatus.CONFLICT);
         }
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("id", user.getId());
-
         String refreshToken = jwtService.generateRefreshToken(payload, user);
         String token = jwtService.generateToken(payload, user);
+
         User savedUser = userService.saveUser(user);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
@@ -72,22 +82,21 @@ public class AuthController {
 
         response.addCookie(cookie);
 
-        return ResponseEntity.ok(AuthenticationDto.builder()
+        return ResponseEntity.ok(AuthResponseDTO.builder()
                 .user(userMapper.mapTo(savedUser))
                 .token(token)
                 .build());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
-        Optional<User> foundUser = userService.getUserByEmail(user.getEmail());
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO authRequestDTO,
+                                                 HttpServletResponse response) {
+        Optional<User> foundUser = userService.getUserByEmail(authRequestDTO.getEmail());
         return foundUser.map(savedUser -> {
-
                     Map<String, Object> payload = new HashMap<>();
                     payload.put("id", savedUser.getId());
-
-                    String refreshToken = jwtService.generateRefreshToken(payload, user);
-                    String token = jwtService.generateToken(payload, user);
+                    String refreshToken = jwtService.generateRefreshToken(payload, savedUser);
+                    String token = jwtService.generateToken(payload, savedUser);
 
                     Cookie cookie = new Cookie("refreshToken", refreshToken);
                     cookie.setMaxAge(tokenExpiration);
@@ -104,7 +113,7 @@ public class AuthController {
                             .build()
                     );
 
-                    return ResponseEntity.ok(AuthenticationDto.builder()
+                    return ResponseEntity.ok(AuthResponseDTO.builder()
                             .user(userMapper.mapTo(savedUser))
                             .token(token)
                             .build());
@@ -144,7 +153,7 @@ public class AuthController {
 
                         response.addCookie(cookie);
 
-                        return ResponseEntity.ok(AuthenticationDto.builder()
+                        return ResponseEntity.ok(AuthResponseDTO.builder()
                                 .token(newAccesstoken)
                                 .build());
                     }
@@ -155,7 +164,7 @@ public class AuthController {
 
     @Transactional
     @GetMapping("/logout")
-    public ResponseEntity logout(@RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
         tokenRepository.deleteAllTokensByUserId(userId);
         return new ResponseEntity<>(HttpStatus.OK);

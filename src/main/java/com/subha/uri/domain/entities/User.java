@@ -1,6 +1,5 @@
 package com.subha.uri.domain.entities;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,10 +31,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "url_id", referencedColumnName = "id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Url> url;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
