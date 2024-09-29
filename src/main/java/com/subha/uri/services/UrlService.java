@@ -4,7 +4,7 @@ import com.subha.uri.domain.entities.Url;
 import com.subha.uri.domain.entities.User;
 import com.subha.uri.repository.UrlRepository;
 import com.subha.uri.repository.UserRepository;
-import com.subha.uri.utils.IdUtil;
+import com.subha.uri.utils.IDEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -27,11 +27,11 @@ public class UrlService {
 
     public Url save(Url url, Long userId) {
         Long uniqueId = idService.getUniqueId();
-        String hash = IdUtil.encodeId(uniqueId);
-        hash = "0000000".substring(hash.length()) + hash;
+        String hash = IDEncoder.encodeId(uniqueId);
+        String shortUrl = "0000000".substring(hash.length()) + hash;
 
         User user = userRepository.getReferenceById(userId);
-        url.setHash(hash);
+        url.setShortURL(shortUrl);
         url.setUser(user);
 
         return urlRepository.save(url);
@@ -41,9 +41,9 @@ public class UrlService {
         return urlRepository.findById(id);
     }
 
-    @Cacheable(value = "url", key = "#hash", unless = "#result==null")
-    public Optional<Url> getByHash(String hash) {
-        return urlRepository.findFirstByHash(hash);
+    @Cacheable(value = "url", key = "#shortUrl", unless = "#result==null")
+    public Optional<Url> getByShortURL(String shortUrl) {
+        return urlRepository.findFirstByShortURL(shortUrl);
     }
 
     public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {

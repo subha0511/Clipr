@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "token")
+@Table(name = "tokens")
 public class Token {
 
     @Id

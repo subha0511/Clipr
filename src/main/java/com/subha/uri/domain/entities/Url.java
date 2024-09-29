@@ -14,18 +14,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "url")
+@Table(name = "urls")
 public class Url implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false)
-    private String long_url;
+    @Column(name="long_url",nullable = false)
+    private String longURL;
 
-    @Column(nullable = false)
-    private String short_url;
+    @Column(name="short_url", nullable = false)
+    private String shortURL;
 
     @JsonIgnore
     @ManyToOne

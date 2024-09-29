@@ -12,9 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UrlRepository extends PagingAndSortingRepository<Url, Long>, JpaRepository<Url,Long> {
 
-    Optional<Url> findByHash(String hash);
-
-    Optional<Url> findFirstByHash(String hash);
+    Optional<Url> findFirstByShortURL(String shortUrl);
 
     Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable);
 }

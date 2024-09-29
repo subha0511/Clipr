@@ -3,7 +3,7 @@ package com.subha.uri.utils;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class IdUtil {
+public class IDEncoder {
 
     public String encodeId(Long num) {
         String symbols = "7SVQN0anC4PopJb3Aqfdk8t1ZzcWOvlYHLEeF2jIyXB569gusrKRwMGiDhxTmU";
