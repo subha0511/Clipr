@@ -1,6 +1,6 @@
 package com.subha.uri.domain.entities;
 
-import jakarta.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +22,13 @@ public class Url implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String url;
+    private String long_url;
 
     @Column(nullable = false)
-    private String hash;
+    private String short_url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

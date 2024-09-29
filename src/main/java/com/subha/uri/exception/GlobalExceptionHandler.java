@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +30,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Map<String,String>> handleGeneralException(Exception ex) {
+        System.out.println(Arrays.toString(ex.getStackTrace()).replace( ',', '\n' ));
+        return new ResponseEntity<>(Map.of("message","An unexpected error occurred: " + ex.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

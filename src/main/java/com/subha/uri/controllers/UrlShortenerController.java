@@ -5,6 +5,7 @@ import com.subha.uri.domain.entities.Url;
 import com.subha.uri.mappers.Mapper;
 import com.subha.uri.services.JwtService;
 import com.subha.uri.services.UrlService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -44,10 +46,10 @@ public class UrlShortenerController {
 
     @PostMapping(path = "")
     public ResponseEntity<UrlDTO> createUrl(@RequestHeader("Authorization") String bearerToken,
-                                            @RequestBody UrlDTO urlDto) {
+                                            @Valid @RequestBody UrlDTO urlDto) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
         Url url = urlMapper.mapFrom(urlDto);
-        Url newUrl = urlService.save(url,userId);
+        Url newUrl = urlService.save(url, userId);
         return new ResponseEntity<UrlDTO>(urlMapper.mapTo(newUrl), HttpStatus.CREATED);
     }
 
@@ -55,10 +57,10 @@ public class UrlShortenerController {
     public ResponseEntity<?> getUrl(@PathVariable("id") Long id) {
         Optional<Url> urlFound = urlService.getById(id);
         return urlFound.map(url -> {
-                    UrlDTO urlDto = urlMapper.mapTo(url);
+                    Object urlDto = urlMapper.mapTo(url);
                     return new ResponseEntity<>(urlDto, HttpStatus.OK);
                 })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElse(new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND));
     }
 
 }

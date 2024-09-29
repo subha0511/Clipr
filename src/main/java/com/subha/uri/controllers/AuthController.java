@@ -50,6 +50,7 @@ public class AuthController {
     @Value("${cookie.token.expiration}")
     private int tokenExpiration;
 
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AuthRequestDTO authRequestDTO,
                                       HttpServletResponse response) {
@@ -75,7 +76,7 @@ public class AuthController {
         tokenRepository.save(Token
                 .builder()
                 .user(savedUser)
-                .refreshToken(refreshToken)
+                .refreshToken(passwordEncoder.encode(refreshToken))
                 .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
                 .build()
         );
@@ -108,7 +109,7 @@ public class AuthController {
                     tokenRepository.save(Token
                             .builder()
                             .user(savedUser)
-                            .refreshToken(refreshToken)
+                            .refreshToken(passwordEncoder.encode(refreshToken))
                             .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
                             .build()
                     );
@@ -126,7 +127,8 @@ public class AuthController {
         if (refreshToken == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Optional<Token> token = tokenRepository.findByRefreshToken(refreshToken);
+
+        Optional<Token> token = tokenRepository.findByRefreshToken(passwordEncoder.encode(refreshToken));
         return token.map(foundToken -> {
                     User user = foundToken.getUser();
                     if (jwtService.isTokenValid(refreshToken, user)) {
@@ -141,12 +143,12 @@ public class AuthController {
                         tokenRepository.save(Token
                                 .builder()
                                 .user(user)
-                                .refreshToken(newRefreshToken)
+                                .refreshToken(passwordEncoder.encode(newRefreshToken))
                                 .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
                                 .build()
                         );
 
-                        Cookie cookie = new Cookie("refreshToken", refreshToken);
+                        Cookie cookie = new Cookie("refreshToken", newRefreshToken);
                         cookie.setMaxAge(tokenExpiration);
                         cookie.setSecure(true);
                         cookie.setHttpOnly(true);

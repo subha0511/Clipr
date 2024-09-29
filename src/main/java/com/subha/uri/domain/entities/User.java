@@ -1,10 +1,12 @@
 package com.subha.uri.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -31,6 +33,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+//    @Column(columnDefinition = "boolean default false")
+//    private Boolean verified;
+
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Url> url;
 

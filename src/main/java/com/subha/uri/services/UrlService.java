@@ -25,7 +25,7 @@ public class UrlService {
     @Autowired
     private IdService idService;
 
-    public Url save(Url url,Long userId) {
+    public Url save(Url url, Long userId) {
         Long uniqueId = idService.getUniqueId();
         String hash = IdUtil.encodeId(uniqueId);
         hash = "0000000".substring(hash.length()) + hash;
@@ -41,7 +41,7 @@ public class UrlService {
         return urlRepository.findById(id);
     }
 
-    @Cacheable(value = "urls", key = "#hash")
+    @Cacheable(value = "url", key = "#hash", unless = "#result==null")
     public Optional<Url> getByHash(String hash) {
         return urlRepository.findFirstByHash(hash);
     }
