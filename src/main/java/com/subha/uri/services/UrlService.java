@@ -6,6 +6,7 @@ import com.subha.uri.repository.UrlRepository;
 import com.subha.uri.repository.UserRepository;
 import com.subha.uri.utils.IDEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,13 @@ public class  UrlService {
     @Cacheable(value = "url", key = "#shortUrl", unless = "#result==null")
     public Optional<Url> getByShortURL(String shortUrl) {
         return urlRepository.findFirstByShortUrl(shortUrl);
+    }
+
+    @CacheEvict(value = "url", key = "#shortUrl")
+    public Optional<Url> deleteById(Long id) {
+        Optional<Url> url = urlRepository.findById(id);
+        url.ifPresent(urlRepository::delete);
+        return url;
     }
 
     public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {

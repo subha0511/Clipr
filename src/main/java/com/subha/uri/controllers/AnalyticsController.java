@@ -24,7 +24,6 @@ public class AnalyticsController {
     @Autowired
     private JwtService jwtService;
 
-
     @Autowired
     private UrlRepository urlRepository;
 
@@ -51,7 +50,7 @@ public class AnalyticsController {
     }
 
     @GetMapping("/click/{shortUrl}")
-    public ResponseEntity<Object> getTotalClickByInterval(@PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken, @RequestParam(value = "startTime") String startTime, @RequestParam(value = "endTime") String endTime) {
+    public ResponseEntity<Object> getTotalClickByInterval(@PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken, @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime, @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
         Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
         if (urlFound.isEmpty()) {
@@ -95,5 +94,4 @@ public class AnalyticsController {
         Map<String, Long> totalClicks = eventService.getTotalClick(shortUrl);
         return ResponseEntity.ok(totalClicks);
     }
-
 }

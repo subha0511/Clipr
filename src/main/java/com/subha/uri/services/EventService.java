@@ -4,12 +4,15 @@ import com.subha.uri.domain.entities.Event;
 import com.subha.uri.repository.EventRepository;
 import com.subha.uri.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 @Service
 public class EventService {
@@ -20,8 +23,9 @@ public class EventService {
     @Autowired
     private UrlRepository urlRepository;
 
-    public Event addEvent(Event event) {
-        return eventRepository.save(event);
+    @Async
+    public CompletableFuture<Event> addEventAsync(Event event) {
+        return CompletableFuture.completedFuture(eventRepository.save(event));
     }
 
     public Map<String, Long> getClickByCountry(String shortUrl) {

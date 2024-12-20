@@ -60,4 +60,9 @@ public class UrlShortenerController {
                 .orElse(new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND));
     }
 
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteUrl(@PathVariable("id") Long id) {
+        urlService.deleteById(id);
+        return new ResponseEntity<>(Map.of("message", "Url deleted successfully"), HttpStatus.OK);
+    }
 }

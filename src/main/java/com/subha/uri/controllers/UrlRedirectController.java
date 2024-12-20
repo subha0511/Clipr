@@ -64,7 +64,7 @@ public class UrlRedirectController {
                 .ipAddress(ipAddress)
                 .build();
 
-        eventService.addEvent(event);
+        eventService.addEventAsync(event);
 
         String longUrl = url.getLongUrl();
         // If URL is missing the protocol, prepend "https://"
