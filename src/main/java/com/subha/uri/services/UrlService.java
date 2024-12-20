@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UrlService {
+public class  UrlService {
 
     @Autowired
     private UrlRepository urlRepository;
@@ -31,7 +31,7 @@ public class UrlService {
         String shortUrl = "0000000".substring(hash.length()) + hash;
 
         User user = userRepository.getReferenceById(userId);
-        url.setShortURL(shortUrl);
+        url.setShortUrl(shortUrl);
         url.setUser(user);
 
         return urlRepository.save(url);
@@ -43,7 +43,7 @@ public class UrlService {
 
     @Cacheable(value = "url", key = "#shortUrl", unless = "#result==null")
     public Optional<Url> getByShortURL(String shortUrl) {
-        return urlRepository.findFirstByShortURL(shortUrl);
+        return urlRepository.findFirstByShortUrl(shortUrl);
     }
 
     public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {

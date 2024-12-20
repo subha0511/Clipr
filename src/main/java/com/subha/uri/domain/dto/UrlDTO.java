@@ -15,7 +15,7 @@ public class UrlDTO {
     private Long id;
 
     @NotBlank(message = "Url cannot be empty")
-    private String longURL;
+    private String longUrl;
 
-    private String shortURL;
+    private String shortUrl;
 }

@@ -1,26 +1,22 @@
 package com.subha.uri.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"}),
-})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"}),})
 public class User implements UserDetails {
 
     @Id
@@ -33,12 +29,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-//    @Column(columnDefinition = "boolean default false")
-//    private Boolean verified;
-
-    @JsonIgnore
+    @JsonManagedReference // Forward reference for JSON serialization
+    @ToString.Exclude     // Prevent Lombok recursion
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<Url> url;
+    private List<Url> urls;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

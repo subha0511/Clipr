@@ -24,6 +24,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -50,70 +52,86 @@ public class AuthController {
     @Value("${cookie.token.expiration}")
     private int tokenExpiration;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AuthRequestDTO authRequestDTO, HttpServletResponse response) {
+
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@Valid @RequestBody AuthRequestDTO authRequestDTO, HttpServletResponse response) {
+//        User user = authMapper.mapFrom(authRequestDTO);
+//        if (userService.userExists(user)) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT)
+//                    .body(Map.of("message", "User Already Exists"));
+//        }
+//
+//        User savedUser = userService.saveUser(user);
+//
+//        Token newToken = Token.builder()
+//                .user(savedUser)
+//                .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
+//                .build();
+//
+//        Map<String, Object> payload = new HashMap<>();
+//        payload.put("id", user.getId());
+//        payload.put("token_id", newToken.getId());
+//        String refreshTokenJwt = jwtService.generateRefreshToken(payload, user);
+//
+//        newToken.setRefreshToken(passwordEncoder.encode(refreshTokenJwt));
+//        tokenRepository.save(newToken);
+//
+//        Cookie cookie = new Cookie("refreshToken", refreshTokenJwt);
+//        cookie.setMaxAge(tokenExpiration);
+//        cookie.setSecure(true);
+//        cookie.setHttpOnly(true);
+//
+//        response.addCookie(cookie);
+//
+//        String accessTokenJwt = jwtService.generateToken(payload, user);
+//
+//        return ResponseEntity.ok(AuthResponseDTO.builder()
+//                .user(userMapper.mapTo(savedUser))
+//                .token(accessTokenJwt)
+//                .build());
+//    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@Valid @RequestBody AuthRequestDTO authRequestDTO, HttpServletResponse response) {
         User user = authMapper.mapFrom(authRequestDTO);
-        if (userService.userExists(user)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", "User Already Exists"));
-        }
+
+        Optional<User> checkUser = userService.getUserByEmail(authRequestDTO.getEmail());
+
+        User savedUser = checkUser.orElseGet(() -> userService.saveUser(user));
+
+        String tokenId = UUID.randomUUID()
+                .toString();
+
+        // Generate New Token in Hibernate
+        Token newToken = Token.builder()
+                .id(tokenId)
+                .user(savedUser)
+                .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration * 1000L))
+                .build();
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("id", user.getId());
-        String refreshToken = jwtService.generateRefreshToken(payload, user);
-        String token = jwtService.generateToken(payload, user);
+        payload.put("id", savedUser.getId());
+        payload.put("token_id", newToken.getId());
+        String refreshTokenJwt = jwtService.generateRefreshToken(payload, savedUser);
 
-        User savedUser = userService.saveUser(user);
+        newToken.setRefreshToken(passwordEncoder.encode(refreshTokenJwt));
+        tokenRepository.save(newToken);
 
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        Cookie cookie = new Cookie("refreshToken", refreshTokenJwt);
         cookie.setMaxAge(tokenExpiration);
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
 
-        tokenRepository.save(Token.builder()
-                .user(savedUser)
-                .refreshToken(passwordEncoder.encode(refreshToken))
-                .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
-                .build());
-
         response.addCookie(cookie);
+
+        String accessTokenJwt = jwtService.generateToken(payload, savedUser);
 
         return ResponseEntity.ok(AuthResponseDTO.builder()
                 .user(userMapper.mapTo(savedUser))
-                .token(token)
+                .token(accessTokenJwt)
                 .build());
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody AuthRequestDTO authRequestDTO, HttpServletResponse response) {
-        Optional<User> foundUser = userService.getUserByEmail(authRequestDTO.getEmail());
-        return foundUser.map(savedUser -> {
-                    Map<String, Object> payload = new HashMap<>();
-                    payload.put("id", savedUser.getId());
-                    String refreshToken = jwtService.generateRefreshToken(payload, savedUser);
-                    String token = jwtService.generateToken(payload, savedUser);
-
-                    Cookie cookie = new Cookie("refreshToken", refreshToken);
-                    cookie.setMaxAge(tokenExpiration);
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-
-                    response.addCookie(cookie);
-
-                    tokenRepository.save(Token.builder()
-                            .user(savedUser)
-                            .refreshToken(passwordEncoder.encode(refreshToken))
-                            .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
-                            .build());
-
-                    return ResponseEntity.ok((Object) AuthResponseDTO.builder()
-                            .user(userMapper.mapTo(savedUser))
-                            .token(token)
-                            .build());
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("message", "User not found")));
-    }
 
     @GetMapping("/refresh")
     public ResponseEntity<?> refresh(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
@@ -122,40 +140,61 @@ public class AuthController {
                     .body(Map.of("message", "Refresh token is null"));
         }
 
-        Optional<Token> token = tokenRepository.findByRefreshToken(passwordEncoder.encode(refreshToken));
-        return token.map(foundToken -> {
-                    User user = foundToken.getUser();
-                    if (jwtService.isTokenValid(refreshToken, user)) {
-                        tokenRepository.delete(foundToken);
+        String tokenId = (String) jwtService.extractAllClaims(refreshToken)
+                .get("token_id");
+        Optional<Token> token = tokenRepository.findById(tokenId);
 
-                        Map<String, Object> payload = new HashMap<>();
-                        payload.put("id", user.getId());
+        if (token.isPresent()) {
+            Token foundToken = token.get();
 
-                        String newAccesstoken = jwtService.generateToken(payload, user);
-                        String newRefreshToken = jwtService.generateRefreshToken(payload, user);
+            if (!passwordEncoder.matches(refreshToken, foundToken.getRefreshToken())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Refresh token mismatch"));
+            }
 
-                        tokenRepository.save(Token.builder()
-                                .user(user)
-                                .refreshToken(passwordEncoder.encode(newRefreshToken))
-                                .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration))
-                                .build());
+            User user = foundToken.getUser();
 
-                        Cookie cookie = new Cookie("refreshToken", newRefreshToken);
-                        cookie.setMaxAge(tokenExpiration);
-                        cookie.setSecure(true);
-                        cookie.setHttpOnly(true);
+            if (!jwtService.isTokenValid(refreshToken, user)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Refresh token expired"));
+            }
 
-                        response.addCookie(cookie);
+            tokenRepository.delete(foundToken);
 
-                        return ResponseEntity.ok(AuthResponseDTO.builder()
-                                .token(newAccesstoken)
-                                .build());
-                    }
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body(Map.of("message", "Refresh token expired"));
-                })
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("message", "Refresh token not found")));
+            String newTokenId = UUID.randomUUID()
+                    .toString();
+
+            Token newToken = Token.builder()
+                    .id(newTokenId)
+                    .user(user)
+                    .expiration(new Timestamp(System.currentTimeMillis() + tokenExpiration * 1000L))
+                    .build();
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("id", user.getId());
+            payload.put("token_id", newToken.getId());
+
+            String newAccesstoken = jwtService.generateToken(payload, user);
+            String newRefreshToken = jwtService.generateRefreshToken(payload, user);
+
+            newToken.setRefreshToken(passwordEncoder.encode(newRefreshToken));
+            tokenRepository.save(newToken);
+
+            Cookie cookie = new Cookie("refreshToken", newRefreshToken);
+            cookie.setMaxAge(tokenExpiration);
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
+
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(AuthResponseDTO.builder()
+                    .user(userMapper.mapTo(user))
+                    .token(newAccesstoken)
+                    .build());
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Refresh token not found"));
     }
 
     @Transactional
@@ -167,3 +206,4 @@ public class AuthController {
                 .body(Map.of("message", "User Logged Out"));
     }
 }
+

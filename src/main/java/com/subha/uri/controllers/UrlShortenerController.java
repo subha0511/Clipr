@@ -32,9 +32,7 @@ public class UrlShortenerController {
     private Mapper<Url, UrlDTO> urlMapper;
 
     @GetMapping(path = "/")
-    public List<UrlDTO> getAllUrl(@RequestHeader("Authorization") String bearerToken,
-                                  @RequestParam(defaultValue = "0") final Integer pageNumber,
-                                  @RequestParam(defaultValue = "5") final Integer size) {
+    public List<UrlDTO> getAllUrl(@RequestHeader("Authorization") String bearerToken, @RequestParam(defaultValue = "0") final Integer pageNumber, @RequestParam(defaultValue = "5") final Integer size) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
 
         Pageable pageable = PageRequest.of(pageNumber, size);
@@ -45,8 +43,7 @@ public class UrlShortenerController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<UrlDTO> createUrl(@RequestHeader("Authorization") String bearerToken,
-                                            @Valid @RequestBody UrlDTO urlDto) {
+    public ResponseEntity<UrlDTO> createUrl(@RequestHeader("Authorization") String bearerToken, @Valid @RequestBody UrlDTO urlDto) {
         Long userId = jwtService.extractId(bearerToken.substring(7));
         Url url = urlMapper.mapFrom(urlDto);
         Url newUrl = urlService.save(url, userId);

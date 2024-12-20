@@ -1,22 +1,25 @@
 package com.subha.uri.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "tokens")
+@Table(name = "tokens", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"refreshToken"}),
+})
 public class Token {
 
     @Id
+    private String id;
+
     private String refreshToken;
 
     @ManyToOne

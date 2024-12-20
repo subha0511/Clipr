@@ -1,15 +1,14 @@
 package com.subha.uri.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,14 +20,15 @@ public class Url implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name="long_url",nullable = false)
-    private String longURL;
+    @Column(name = "long_url", nullable = false)
+    private String longUrl;
 
-    @Column(name="short_url", nullable = false)
-    private String shortURL;
+    @Column(name = "short_url", nullable = false)
+    private String shortUrl;
 
-    @JsonIgnore
+    @JsonBackReference // Back reference for JSON serialization
+    @ToString.Exclude  // Prevent Lombok recursion
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 }
