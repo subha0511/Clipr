@@ -1,7 +1,7 @@
 package com.subha.uri.services;
 
-import com.subha.uri.domain.entities.IdGen;
-import com.subha.uri.repository.IdRepository;
+import com.subha.uri.domain.entity.IdGen;
+import com.subha.uri.repository.postgres.IdRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.subha.uri.domain.entities;
+package com.subha.uri.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

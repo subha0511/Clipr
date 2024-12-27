@@ -1,7 +1,8 @@
 package com.subha.uri.controllers;
 
-import com.subha.uri.domain.entities.Event;
-import com.subha.uri.domain.entities.Url;
+import com.subha.uri.domain.entity.CEvent;
+import com.subha.uri.domain.entity.Event;
+import com.subha.uri.domain.entity.Url;
 import com.subha.uri.exception.ResourceNotFoundException;
 import com.subha.uri.services.EventService;
 import com.subha.uri.services.UrlService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
@@ -64,7 +67,17 @@ public class UrlRedirectController {
                 .ipAddress(ipAddress)
                 .build();
 
+        CEvent cevent = CEvent.builder()
+                .createdAt(Timestamp.valueOf(LocalDateTime.now()))
+                .shortUrl(shortUrl)
+                .userAgent(userAgent)
+                .referred(referer)
+                .country(country)
+                .ipAddress(ipAddress)
+                .build();
+
         eventService.addEventAsync(event);
+        eventService.addCEventAsync(cevent);
 
         String longUrl = url.getLongUrl();
         // If URL is missing the protocol, prepend "https://"

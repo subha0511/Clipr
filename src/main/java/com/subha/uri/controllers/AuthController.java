@@ -2,11 +2,11 @@ package com.subha.uri.controllers;
 
 import com.subha.uri.domain.dto.auth.AuthRequestDTO;
 import com.subha.uri.domain.dto.auth.AuthResponseDTO;
-import com.subha.uri.domain.entities.Token;
-import com.subha.uri.domain.entities.User;
+import com.subha.uri.domain.entity.Token;
+import com.subha.uri.domain.entity.User;
 import com.subha.uri.mappers.impl.AuthMapper;
 import com.subha.uri.mappers.impl.UserMapper;
-import com.subha.uri.repository.TokenRepository;
+import com.subha.uri.repository.postgres.TokenRepository;
 import com.subha.uri.services.JwtService;
 import com.subha.uri.services.UserService;
 import jakarta.servlet.http.Cookie;

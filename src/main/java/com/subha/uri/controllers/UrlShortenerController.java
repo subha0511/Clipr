@@ -1,7 +1,7 @@
 package com.subha.uri.controllers;
 
 import com.subha.uri.domain.dto.UrlDTO;
-import com.subha.uri.domain.entities.Url;
+import com.subha.uri.domain.entity.Url;
 import com.subha.uri.mappers.Mapper;
 import com.subha.uri.services.JwtService;
 import com.subha.uri.services.UrlService;

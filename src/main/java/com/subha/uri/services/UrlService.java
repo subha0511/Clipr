@@ -1,9 +1,9 @@
 package com.subha.uri.services;
 
-import com.subha.uri.domain.entities.Url;
-import com.subha.uri.domain.entities.User;
-import com.subha.uri.repository.UrlRepository;
-import com.subha.uri.repository.UserRepository;
+import com.subha.uri.domain.entity.Url;
+import com.subha.uri.domain.entity.User;
+import com.subha.uri.repository.postgres.UrlRepository;
+import com.subha.uri.repository.postgres.UserRepository;
 import com.subha.uri.utils.IDEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
