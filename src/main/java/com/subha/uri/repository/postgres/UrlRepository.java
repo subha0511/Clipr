@@ -1,6 +1,6 @@
-package com.subha.uri.repository;
+package com.subha.uri.repository.postgres;
 
-import com.subha.uri.domain.entities.Url;
+import com.subha.uri.domain.entity.Url;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

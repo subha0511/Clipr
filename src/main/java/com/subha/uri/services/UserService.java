@@ -1,7 +1,7 @@
 package com.subha.uri.services;
 
-import com.subha.uri.domain.entities.User;
-import com.subha.uri.repository.UserRepository;
+import com.subha.uri.domain.entity.User;
+import com.subha.uri.repository.postgres.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

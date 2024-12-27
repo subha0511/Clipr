@@ -1,7 +1,7 @@
 package com.subha.uri.mappers.impl;
 
 import com.subha.uri.domain.dto.EventDTO;
-import com.subha.uri.domain.entities.Event;
+import com.subha.uri.domain.entity.Event;
 import com.subha.uri.mappers.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

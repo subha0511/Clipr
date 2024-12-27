@@ -1,4 +1,4 @@
-package com.subha.uri.domain.entities;
+package com.subha.uri.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
 package com.subha.uri.services;
 
-import com.subha.uri.repository.UserRepository;
+import com.subha.uri.repository.postgres.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,7 +1,7 @@
 package com.subha.uri.controllers;
 
 import com.subha.uri.domain.dto.UrlDTO;
-import com.subha.uri.domain.entities.Url;
+import com.subha.uri.domain.entity.Url;
 import com.subha.uri.mappers.Mapper;
 import com.subha.uri.services.JwtService;
 import com.subha.uri.services.UrlService;
@@ -60,4 +60,9 @@ public class UrlShortenerController {
                 .orElse(new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND));
     }
 
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> deleteUrl(@PathVariable("id") Long id) {
+        urlService.deleteById(id);
+        return new ResponseEntity<>(Map.of("message", "Url deleted successfully"), HttpStatus.OK);
+    }
 }

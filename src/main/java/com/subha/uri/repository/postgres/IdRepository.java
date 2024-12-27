@@ -1,6 +1,6 @@
-package com.subha.uri.repository;
+package com.subha.uri.repository.postgres;
 
-import com.subha.uri.domain.entities.IdGen;
+import com.subha.uri.domain.entity.IdGen;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
