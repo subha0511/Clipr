@@ -6,14 +6,14 @@ import com.subha.uri.repository.postgres.UrlRepository;
 import com.subha.uri.services.EventService;
 import com.subha.uri.services.JwtService;
 import com.subha.uri.services.UrlService;
+import com.subha.uri.utils.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,20 +36,129 @@ public class AnalyticsController {
 
   @GetMapping("/country/{shortUrl}")
   public ResponseEntity<Object> getTotalEventsByCountry(
-      @PathVariable("shortUrl") String shortUrl,
-      @RequestHeader("Authorization") String bearerToken) {
+      @PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken,
+      @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
+      @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
     Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
+
     Url url = urlFound.get();
     User urlUser = url.getUser();
     if (!Objects.equals(urlUser.getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
-    Map<String, Long> clickByCountry = eventService.getClickByCountry(shortUrl);
+
+    List<LocalDateTime> interval = DateTimeUtils.initialiseTimestamp(startTime, endTime);
+    LocalDateTime intervalStart = interval.get(0);
+    LocalDateTime intervalEnd = interval.get(1);
+
+    if (intervalStart.isAfter(intervalEnd)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Invalid time interval"), HttpStatus.BAD_REQUEST);
+    }
+
+    Map<String, Long> clickByCountry = eventService.getClickByCountry(shortUrl, intervalStart,
+        intervalEnd);
+    return ResponseEntity.ok(clickByCountry);
+  }
+
+  @GetMapping("/ip/{shortUrl}")
+  public ResponseEntity<Object> getTotalEventsByIpAddress(
+      @PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken,
+      @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
+      @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
+    Long userId = jwtService.extractId(bearerToken.substring(7));
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    if (urlFound.isEmpty()) {
+      return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
+    }
+
+    Url url = urlFound.get();
+    User urlUser = url.getUser();
+    if (!Objects.equals(urlUser.getId(), userId)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
+    }
+
+    List<LocalDateTime> interval = DateTimeUtils.initialiseTimestamp(startTime, endTime);
+    LocalDateTime intervalStart = interval.get(0);
+    LocalDateTime intervalEnd = interval.get(1);
+
+    if (intervalStart.isAfter(intervalEnd)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Invalid time interval"), HttpStatus.BAD_REQUEST);
+    }
+
+    Map<String, Long> clickByCountry = eventService.getEventByIpAddress(shortUrl, intervalStart,
+        intervalEnd);
+    return ResponseEntity.ok(clickByCountry);
+  }
+
+  @GetMapping("/referrer/{shortUrl}")
+  public ResponseEntity<Object> getTotalEventsByReferrer(
+      @PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken,
+      @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
+      @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
+    Long userId = jwtService.extractId(bearerToken.substring(7));
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    if (urlFound.isEmpty()) {
+      return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
+    }
+
+    Url url = urlFound.get();
+    User urlUser = url.getUser();
+    if (!Objects.equals(urlUser.getId(), userId)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
+    }
+
+    List<LocalDateTime> interval = DateTimeUtils.initialiseTimestamp(startTime, endTime);
+    LocalDateTime intervalStart = interval.get(0);
+    LocalDateTime intervalEnd = interval.get(1);
+
+    if (intervalStart.isAfter(intervalEnd)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Invalid time interval"), HttpStatus.BAD_REQUEST);
+    }
+
+    Map<String, Long> clickByCountry = eventService.getEventByReferrer(shortUrl, intervalStart,
+        intervalEnd);
+    return ResponseEntity.ok(clickByCountry);
+  }
+
+  @GetMapping("/user-agent/{shortUrl}")
+  public ResponseEntity<Object> getTotalEventsByUserAgent(
+      @PathVariable("shortUrl") String shortUrl, @RequestHeader("Authorization") String bearerToken,
+      @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
+      @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
+    Long userId = jwtService.extractId(bearerToken.substring(7));
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    if (urlFound.isEmpty()) {
+      return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
+    }
+
+    Url url = urlFound.get();
+    User urlUser = url.getUser();
+    if (!Objects.equals(urlUser.getId(), userId)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
+    }
+
+    List<LocalDateTime> interval = DateTimeUtils.initialiseTimestamp(startTime, endTime);
+    LocalDateTime intervalStart = interval.get(0);
+    LocalDateTime intervalEnd = interval.get(1);
+
+    if (intervalStart.isAfter(intervalEnd)) {
+      return new ResponseEntity<>(
+          Map.of("message", "Invalid time interval"), HttpStatus.BAD_REQUEST);
+    }
+
+    Map<String, Long> clickByCountry = eventService.getEventByUserAgent(shortUrl, intervalStart,
+        intervalEnd);
     return ResponseEntity.ok(clickByCountry);
   }
 
@@ -63,29 +172,23 @@ public class AnalyticsController {
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
+
     Url url = urlFound.get();
     User urlUser = url.getUser();
     if (!Objects.equals(urlUser.getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
-    LocalDateTime intervalStart, intervalEnd;
-    try {
-      intervalEnd = LocalDateTime.parse(endTime,
-          DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    } catch (DateTimeParseException e) {
-      intervalEnd = LocalDateTime.now();
-    }
-    try {
-      intervalStart = LocalDateTime.parse(
-          startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    } catch (DateTimeParseException e) {
-      intervalStart = intervalEnd.minusDays(1);
-    }
+
+    List<LocalDateTime> interval = DateTimeUtils.initialiseInterval(startTime, endTime);
+    LocalDateTime intervalStart = interval.get(0);
+    LocalDateTime intervalEnd = interval.get(1);
+
     if (intervalStart.isAfter(intervalEnd)) {
       return new ResponseEntity<>(
           Map.of("message", "Invalid time interval"), HttpStatus.BAD_REQUEST);
     }
+
     Map<String, Long> clickLastDay = eventService.getClickByInterval(shortUrl, intervalStart,
         intervalEnd);
     return ResponseEntity.ok(clickLastDay);

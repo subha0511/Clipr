@@ -1,11 +1,9 @@
 package com.subha.uri.domain.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,18 +11,12 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name="events")
 public class Event {
 
-    @Id
-    @GeneratedValue()
-    private Long id;
+    private UUID id;
 
-    @NotBlank
     private String shortUrl;
 
-    @CreationTimestamp
     private Timestamp createdAt;
 
     private String userAgent;

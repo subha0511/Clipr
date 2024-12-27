@@ -1,6 +1,5 @@
 package com.subha.uri.controllers;
 
-import com.subha.uri.domain.entity.CEvent;
 import com.subha.uri.domain.entity.Event;
 import com.subha.uri.domain.entity.Url;
 import com.subha.uri.exception.ResourceNotFoundException;
@@ -59,15 +58,7 @@ public class UrlRedirectController {
         String referer = request.getHeader("Referer");
         String country = request.getHeader("CF-IPCountry");
 
-        Event event = Event.builder()
-                .shortUrl(shortUrl)
-                .userAgent(userAgent)
-                .referred(referer)
-                .country(country)
-                .ipAddress(ipAddress)
-                .build();
-
-        CEvent cevent = CEvent.builder()
+        Event cevent = Event.builder()
                 .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .shortUrl(shortUrl)
                 .userAgent(userAgent)
@@ -76,8 +67,7 @@ public class UrlRedirectController {
                 .ipAddress(ipAddress)
                 .build();
 
-        eventService.addEventAsync(event);
-        eventService.addCEventAsync(cevent);
+        eventService.addEventAsync(cevent);
 
         String longUrl = url.getLongUrl();
         // If URL is missing the protocol, prepend "https://"
