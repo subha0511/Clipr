@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @EnableAsync
 public class ApplicationConfig {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
-    }
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return new CustomUserDetailsService();
+  }
 }

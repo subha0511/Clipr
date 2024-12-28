@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class IdDTO {
 
-    private Long id;
+  private Long id;
 
 }

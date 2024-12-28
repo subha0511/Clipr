@@ -1,6 +1,11 @@
 package com.subha.uri.domain.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -13,17 +18,17 @@ import java.util.UUID;
 @Builder
 public class Event {
 
-    private UUID id;
+  private UUID id;
 
-    private String shortUrl;
+  private String shortUrl;
 
-    private Timestamp createdAt;
+  private Timestamp createdAt;
 
-    private String userAgent;
+  private String userAgent;
 
-    private String referred;
+  private String referred;
 
-    private String country;
+  private String country;
 
-    private String ipAddress;
+  private String ipAddress;
 }

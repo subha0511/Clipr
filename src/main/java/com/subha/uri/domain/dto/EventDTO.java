@@ -1,6 +1,5 @@
 package com.subha.uri.domain.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,15 +13,15 @@ import java.sql.Timestamp;
 @Builder
 public class EventDTO {
 
-    private String id;
+  private String id;
 
-    private String shortURL;
+  private String shortURL;
 
-    private Timestamp createdAt;
+  private Timestamp createdAt;
 
-    private String userAgent;
+  private String userAgent;
 
-    private String referred;
+  private String referred;
 
-    private String country;
+  private String country;
 }

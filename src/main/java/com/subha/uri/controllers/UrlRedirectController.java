@@ -18,67 +18,69 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+//@Tag(name = "Url Redirect", description = "Redirects the short URL to the original URL")
 @Controller
 @RequestMapping("/r")
 public class UrlRedirectController {
 
-    @Autowired
-    private UrlService urlService;
+  @Autowired
+  private UrlService urlService;
 
-    @Autowired
-    private EventService eventService;
+  @Autowired
+  private EventService eventService;
 
-    @GetMapping(path = "/hello")
-    public String helloWorld() {
-        return "Hello World";
+  @GetMapping(path = "/hello")
+  public String helloWorld() {
+    return "Hello World";
+  }
+
+  @GetMapping("/{shortURL}")
+  public RedirectView redirectUrl(
+      @PathVariable("shortURL") String shortUrl, HttpServletRequest request) throws IOException {
+    Optional<Url> urlFound = urlService.getByShortURL(shortUrl);
+    if (urlFound.isEmpty()) {
+      throw new ResourceNotFoundException("URL not found for hash: " + shortUrl);
+    }
+    Url url = urlFound.get();
+
+    String ipAddress = request.getHeader("X-Forwarded-For");
+
+    if (ipAddress != null && !ipAddress.isEmpty()) {
+      // Take the first IP if multiple IPs are present
+      ipAddress = ipAddress.split(",")[0].trim();
+    } else {
+      ipAddress = request.getHeader("X-Real-IP");
     }
 
-    @GetMapping("/{shortURL}")
-    public RedirectView redirectUrl(@PathVariable("shortURL") String shortUrl, HttpServletRequest request) throws IOException {
-        Optional<Url> urlFound = urlService.getByShortURL(shortUrl);
-        if (urlFound.isEmpty()) {
-            throw new ResourceNotFoundException("URL not found for hash: " + shortUrl);
-        }
-        Url url = urlFound.get();
-
-        String ipAddress = request.getHeader("X-Forwarded-For");
-
-        if (ipAddress != null && !ipAddress.isEmpty()) {
-            // Take the first IP if multiple IPs are present
-            ipAddress = ipAddress.split(",")[0].trim();
-        } else {
-            ipAddress = request.getHeader("X-Real-IP");
-        }
-
-        if (ipAddress == null || ipAddress.isEmpty()) {
-            ipAddress = request.getRemoteAddr();
-        }
-
-        String userAgent = request.getHeader("User-Agent");
-        String referer = request.getHeader("Referer");
-        String country = request.getHeader("CF-IPCountry");
-
-        Event cevent = Event.builder()
-                .createdAt(Timestamp.valueOf(LocalDateTime.now()))
-                .shortUrl(shortUrl)
-                .userAgent(userAgent)
-                .referred(referer)
-                .country(country)
-                .ipAddress(ipAddress)
-                .build();
-
-        eventService.addEventAsync(cevent);
-
-        String longUrl = url.getLongUrl();
-        // If URL is missing the protocol, prepend "https://"
-        if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
-            longUrl = "https://" + longUrl;
-        }
-
-        RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(longUrl);
-        return redirectView;
+    if (ipAddress == null || ipAddress.isEmpty()) {
+      ipAddress = request.getRemoteAddr();
     }
+
+    String userAgent = request.getHeader("User-Agent");
+    String referer = request.getHeader("Referer");
+    String country = request.getHeader("CF-IPCountry");
+
+    Event cevent = Event.builder()
+        .createdAt(Timestamp.valueOf(LocalDateTime.now()))
+        .shortUrl(shortUrl)
+        .userAgent(userAgent)
+        .referred(referer)
+        .country(country)
+        .ipAddress(ipAddress)
+        .build();
+
+    eventService.addEventAsync(cevent);
+
+    String longUrl = url.getLongUrl();
+    // If URL is missing the protocol, prepend "https://"
+    if (!longUrl.startsWith("http://") && !longUrl.startsWith("https://")) {
+      longUrl = "https://" + longUrl;
+    }
+
+    RedirectView redirectView = new RedirectView();
+    redirectView.setUrl(longUrl);
+    return redirectView;
+  }
 
 }
 

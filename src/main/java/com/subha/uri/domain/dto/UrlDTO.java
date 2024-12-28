@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UrlDTO {
 
-    private Long id;
+  private Long id;
 
-    @NotBlank(message = "Url cannot be empty")
-    private String longUrl;
+  @NotBlank(message = "Url cannot be empty")
+  private String longUrl;
 
-    private String shortUrl;
+  private String shortUrl;
 }

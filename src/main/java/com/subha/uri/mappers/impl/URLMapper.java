@@ -10,17 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class URLMapper implements Mapper<Url, UrlDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
-    
-    @Override
-    public UrlDTO mapTo(Url url) {
-        return modelMapper.map(url, UrlDTO.class);
-    }
+  @Override
+  public UrlDTO mapTo(Url url) {
+    return modelMapper.map(url, UrlDTO.class);
+  }
 
-    @Override
-    public Url mapFrom(UrlDTO urlDto) {
-        return modelMapper.map(urlDto, Url.class);
-    }
+  @Override
+  public Url mapFrom(UrlDTO urlDto) {
+    return modelMapper.map(urlDto, Url.class);
+  }
 }

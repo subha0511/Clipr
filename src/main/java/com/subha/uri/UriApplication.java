@@ -10,8 +10,8 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableCaching
 public class UriApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(UriApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(UriApplication.class, args);
+  }
 
 }

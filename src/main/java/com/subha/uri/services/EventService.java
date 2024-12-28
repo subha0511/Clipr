@@ -3,7 +3,6 @@ package com.subha.uri.services;
 import com.subha.uri.domain.entity.Event;
 import com.subha.uri.repository.clickhouse.EventRepository;
 import com.subha.uri.repository.postgres.UrlRepository;
-import com.subha.uri.utils.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

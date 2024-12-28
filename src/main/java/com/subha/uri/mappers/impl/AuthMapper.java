@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthMapper implements Mapper<User, AuthRequestDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
-    @Override
-    public AuthRequestDTO mapTo(User user) {
-        return modelMapper.map(user, AuthRequestDTO.class);
-    }
+  @Override
+  public AuthRequestDTO mapTo(User user) {
+    return modelMapper.map(user, AuthRequestDTO.class);
+  }
 
-    @Override
-    public User mapFrom(AuthRequestDTO authRequestDTO) {
-        return modelMapper.map(authRequestDTO, User.class);
-    }
+  @Override
+  public User mapFrom(AuthRequestDTO authRequestDTO) {
+    return modelMapper.map(authRequestDTO, User.class);
+  }
 }

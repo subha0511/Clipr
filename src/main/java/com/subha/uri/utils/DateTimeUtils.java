@@ -26,7 +26,8 @@ public class DateTimeUtils {
   public static List<LocalDateTime> initialiseInterval(String startTime, String endTime) {
     LocalDateTime intervalStart, intervalEnd;
     try {
-      intervalEnd = LocalDateTime.parse(endTime,
+      intervalEnd = LocalDateTime.parse(
+          endTime,
           DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     } catch (DateTimeParseException e) {
       intervalEnd = LocalDateTime.now();
@@ -43,7 +44,8 @@ public class DateTimeUtils {
   public static List<LocalDateTime> initialiseTimestamp(String startTime, String endTime) {
     LocalDateTime intervalStart, intervalEnd;
     try {
-      intervalEnd = LocalDateTime.parse(endTime,
+      intervalEnd = LocalDateTime.parse(
+          endTime,
           DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     } catch (DateTimeParseException e) {
       intervalEnd = LocalDateTime.now();

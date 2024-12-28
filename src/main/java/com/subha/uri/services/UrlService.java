@@ -15,46 +15,46 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class  UrlService {
+public class UrlService {
 
-    @Autowired
-    private UrlRepository urlRepository;
+  @Autowired
+  private UrlRepository urlRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-    @Autowired
-    private IdService idService;
+  @Autowired
+  private IdService idService;
 
-    public Url save(Url url, Long userId) {
-        Long uniqueId = idService.getUniqueId();
-        String hash = IDEncoder.encodeId(uniqueId);
-        String shortUrl = "0000000".substring(hash.length()) + hash;
+  public Url save(Url url, Long userId) {
+    Long uniqueId = idService.getUniqueId();
+    String hash = IDEncoder.encodeId(uniqueId);
+    String shortUrl = "0000000".substring(hash.length()) + hash;
 
-        User user = userRepository.getReferenceById(userId);
-        url.setShortUrl(shortUrl);
-        url.setUser(user);
+    User user = userRepository.getReferenceById(userId);
+    url.setShortUrl(shortUrl);
+    url.setUser(user);
 
-        return urlRepository.save(url);
-    }
+    return urlRepository.save(url);
+  }
 
-    public Optional<Url> getById(Long id) {
-        return urlRepository.findById(id);
-    }
+  public Optional<Url> getById(Long id) {
+    return urlRepository.findById(id);
+  }
 
-    @Cacheable(value = "url", key = "#shortUrl", unless = "#result==null")
-    public Optional<Url> getByShortURL(String shortUrl) {
-        return urlRepository.findFirstByShortUrl(shortUrl);
-    }
+  @Cacheable(value = "url", key = "#shortUrl", unless = "#result==null")
+  public Optional<Url> getByShortURL(String shortUrl) {
+    return urlRepository.findFirstByShortUrl(shortUrl);
+  }
 
-    @CacheEvict(value = "url", key = "#shortUrl")
-    public Optional<Url> deleteById(Long id) {
-        Optional<Url> url = urlRepository.findById(id);
-        url.ifPresent(urlRepository::delete);
-        return url;
-    }
+  @CacheEvict(value = "url", key = "#shortUrl")
+  public Optional<Url> deleteById(Long id) {
+    Optional<Url> url = urlRepository.findById(id);
+    url.ifPresent(urlRepository::delete);
+    return url;
+  }
 
-    public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {
-        return urlRepository.findAllUrlsByUserId(userId, pageable);
-    }
+  public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {
+    return urlRepository.findAllUrlsByUserId(userId, pageable);
+  }
 }

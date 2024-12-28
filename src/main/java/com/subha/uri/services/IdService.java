@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class IdService {
 
-    @Autowired
-    private IdRepository idRepository;
+  @Autowired
+  private IdRepository idRepository;
 
-    public Long getUniqueId() {
-        return idRepository.save(new IdGen())
-                .getId();
-    }
+  public Long getUniqueId() {
+    return idRepository.save(new IdGen())
+        .getId();
+  }
 }

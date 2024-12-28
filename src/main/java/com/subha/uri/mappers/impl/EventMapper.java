@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventMapper implements Mapper<Event, EventDTO> {
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
-    @Override
-    public EventDTO mapTo(Event event) {
-        return modelMapper.map(event, EventDTO.class);
-    }
+  @Override
+  public EventDTO mapTo(Event event) {
+    return modelMapper.map(event, EventDTO.class);
+  }
 
-    @Override
-    public Event mapFrom(EventDTO eventDto) {
-        return modelMapper.map(eventDto, Event.class);
-    }
+  @Override
+  public Event mapFrom(EventDTO eventDto) {
+    return modelMapper.map(eventDto, Event.class);
+  }
 }
