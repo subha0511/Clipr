@@ -1,0 +1,44 @@
+spring:
+
+  datasource:
+    url: DATABASE_URL
+    username: DATABASE_USERNAME
+    password: DATABASE_PASSWORD
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  redis:
+    host: DATABASE_URL
+    port: 6379
+
+  cache:
+    type: redis
+
+clickhouse:
+  url: DATABASE_URL
+  username: DATABASE_USERNAME
+  password: DATABASE_PASSWORD
+  driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+
+jwt:
+  secret:
+    access-expiration: 1800000
+    expiration: 1800000
+    refresh-expiration: 302400000
+    access-key: ACCESS_KEY_SECRET
+    refresh-key: REFRESH_KEY_SECRET
+
+cookie:
+  token:
+    expiration: 604800
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
