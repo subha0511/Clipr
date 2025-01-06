@@ -1,7 +1,6 @@
 package com.subha.uri.controllers;
 
 import com.subha.uri.domain.entity.Url;
-import com.subha.uri.domain.entity.User;
 import com.subha.uri.repository.postgres.UrlRepository;
 import com.subha.uri.services.EventService;
 import com.subha.uri.services.JwtService;
@@ -60,14 +59,13 @@ public class AnalyticsController {
       @Parameter(description = "Start Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
       @Parameter(description = "End Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
-    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
 
     Url url = urlFound.get();
-    User urlUser = url.getUser();
-    if (!Objects.equals(urlUser.getId(), userId)) {
+    if (!Objects.equals(url.getUser().getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
@@ -99,14 +97,13 @@ public class AnalyticsController {
       @Parameter(description = "Start Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
       @Parameter(description = "End Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
-    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
 
     Url url = urlFound.get();
-    User urlUser = url.getUser();
-    if (!Objects.equals(urlUser.getId(), userId)) {
+    if (!Objects.equals(url.getUser().getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
@@ -138,14 +135,13 @@ public class AnalyticsController {
       @Parameter(description = "Start Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
       @Parameter(description = "End Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
-    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
 
     Url url = urlFound.get();
-    User urlUser = url.getUser();
-    if (!Objects.equals(urlUser.getId(), userId)) {
+    if (!Objects.equals(url.getUser().getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
@@ -177,14 +173,13 @@ public class AnalyticsController {
       @Parameter(description = "Start Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
       @Parameter(description = "End Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
-    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
 
     Url url = urlFound.get();
-    User urlUser = url.getUser();
-    if (!Objects.equals(urlUser.getId(), userId)) {
+    if (!Objects.equals(url.getUser().getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
@@ -216,14 +211,13 @@ public class AnalyticsController {
       @Parameter(description = "Start Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
       @Parameter(description = "End Time in YYYY-MM-DD HH:MM:SS format", required = false) @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
     Long userId = jwtService.extractId(bearerToken.substring(7));
-    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
     if (urlFound.isEmpty()) {
       return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
     }
 
     Url url = urlFound.get();
-    User urlUser = url.getUser();
-    if (!Objects.equals(urlUser.getId(), userId)) {
+    if (!Objects.equals(url.getUser().getId(), userId)) {
       return new ResponseEntity<>(
           Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
     }
@@ -247,13 +241,13 @@ public class AnalyticsController {
 //      @PathVariable("shortUrl") String shortUrl,
 //      @RequestHeader("Authorization") String bearerToken) {
 //    Long userId = jwtService.extractId(bearerToken.substring(7));
-//    Optional<Url> urlFound = urlRepository.findFirstByShortUrl(shortUrl);
+//    Optional<Url> urlFound = urlRepository.findFirstByShortUrlWithUser(shortUrl);
 //    if (urlFound.isEmpty()) {
 //      return new ResponseEntity<>(Map.of("message", "Url not found"), HttpStatus.NOT_FOUND);
 //    }
 //    Url url = urlFound.get();
-//    User urlUser = url.getUser();
-//    if (!Objects.equals(urlUser.getId(), userId)) {
+//    User url.getUser() = url.getUser();
+//    if (!Objects.equals(url.getUser().getId(), userId)) {
 //      return new ResponseEntity<>(
 //          Map.of("message", "Unauthorised Access. Url Owner mismatch."), HttpStatus.BAD_REQUEST);
 //    }

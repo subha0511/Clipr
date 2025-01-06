@@ -5,9 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
+import java.util.Map;
+
 @SpringBootApplication
 @Log
-@EnableCaching
 public class UriApplication {
 
   public static void main(String[] args) {

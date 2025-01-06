@@ -54,7 +54,7 @@ public class DateTimeUtils {
       intervalStart = LocalDateTime.parse(
           startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     } catch (DateTimeParseException e) {
-      intervalStart = intervalEnd.minusYears(20);
+      intervalStart = intervalEnd.minusYears(1);
     }
     return List.of(intervalStart, intervalEnd);
   }

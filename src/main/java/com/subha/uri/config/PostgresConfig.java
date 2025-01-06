@@ -41,9 +41,7 @@ public class PostgresConfig {
   @Bean
   public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
       EntityManagerFactoryBuilder builder, @Qualifier("postgresDataSource") DataSource dataSource) {
-    return builder.dataSource(dataSource)
-        .packages("com.subha.uri.domain.entity")
-        .build();
+    return builder.dataSource(dataSource).packages("com.subha.uri.domain.entity").build();
   }
 
   @Primary

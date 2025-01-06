@@ -5,12 +5,13 @@ import com.subha.uri.domain.entity.Url;
 import com.subha.uri.exception.ResourceNotFoundException;
 import com.subha.uri.services.EventService;
 import com.subha.uri.services.UrlService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
@@ -18,8 +19,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-//@Tag(name = "Url Redirect", description = "Redirects the short URL to the original URL")
-@Controller
+@Tag(name = "Url Redirect", description = "Redirects the short URL to the original URL")
+@RestController
 @RequestMapping("/r")
 public class UrlRedirectController {
 
@@ -60,16 +61,11 @@ public class UrlRedirectController {
     String referer = request.getHeader("Referer");
     String country = request.getHeader("CF-IPCountry");
 
-    Event cevent = Event.builder()
-        .createdAt(Timestamp.valueOf(LocalDateTime.now()))
-        .shortUrl(shortUrl)
-        .userAgent(userAgent)
-        .referred(referer)
-        .country(country)
-        .ipAddress(ipAddress)
-        .build();
+    Event event = Event.builder().createdAt(Timestamp.valueOf(LocalDateTime.now()))
+        .shortUrl(shortUrl).userAgent(userAgent).referred(referer).country(country)
+        .ipAddress(ipAddress).build();
 
-    eventService.addEventAsync(cevent);
+    eventService.addEventAsync(event);
 
     String longUrl = url.getLongUrl();
     // If URL is missing the protocol, prepend "https://"

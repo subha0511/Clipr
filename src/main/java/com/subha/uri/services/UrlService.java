@@ -47,11 +47,14 @@ public class UrlService {
     return urlRepository.findFirstByShortUrl(shortUrl);
   }
 
+  public Optional<Url> getByShortURLWithUser(String shortUrl) {
+    return urlRepository.findFirstByShortUrlWithUser(shortUrl);
+  }
+
   @CacheEvict(value = "url", key = "#shortUrl")
-  public Optional<Url> deleteById(Long id) {
+  public void deleteById(Long id) {
     Optional<Url> url = urlRepository.findById(id);
     url.ifPresent(urlRepository::delete);
-    return url;
   }
 
   public Page<Url> findAllUrlsByUserId(Long userId, Pageable pageable) {

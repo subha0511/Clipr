@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Repository
+@Component
 public class EventRepository {
 
   @Autowired
@@ -43,18 +43,16 @@ public class EventRepository {
     String sql = """
         SELECT country, count(*) as count
         FROM events
-        WHERE short_url = ? AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY country
         """;
-    return clickHouseJdbcTemplate.query(
-            sql, PreparedStatementSetter -> {
-              PreparedStatementSetter.setString(1, shortUrl);
-              PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
-              PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
-            }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
-                rs.getString("country") == null ? "Unknown" : rs.getString("country"),
-                rs.getLong("count"))).stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1));
+    return clickHouseJdbcTemplate.query(sql, PreparedStatementSetter -> {
+          PreparedStatementSetter.setString(1, shortUrl);
+          PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
+          PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
+        }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
+            rs.getString("country") == null ? "Unknown" : rs.getString("country"), rs.getLong("count")))
+        .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1));
   }
 
   public Map<String, Long> getEventsByUserAgent(
@@ -62,17 +60,16 @@ public class EventRepository {
     String sql = """
         SELECT user_agent, count(*) as count
         FROM events
-        WHERE short_url = ? AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY user_agent
         """;
-    return clickHouseJdbcTemplate.query(
-            sql, PreparedStatementSetter -> {
-              PreparedStatementSetter.setString(1, shortUrl);
-              PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
-              PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
-            }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
-                rs.getString("user_agent") == null ? "Unknown" : rs.getString("user_agent"),
-                rs.getLong("count"))).stream()
+    return clickHouseJdbcTemplate.query(sql, PreparedStatementSetter -> {
+          PreparedStatementSetter.setString(1, shortUrl);
+          PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
+          PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
+        }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
+            rs.getString("user_agent") == null ? "Unknown" : rs.getString("user_agent"),
+            rs.getLong("count"))).stream()
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1));
   }
 
@@ -81,17 +78,16 @@ public class EventRepository {
     String sql = """
         SELECT ip_address, count(*) as count
         FROM events
-        WHERE short_url = ? AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY ip_address
         """;
-    return clickHouseJdbcTemplate.query(
-            sql, PreparedStatementSetter -> {
-              PreparedStatementSetter.setString(1, shortUrl);
-              PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
-              PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
-            }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
-                rs.getString("ip_address") == null ? "Unknown" : rs.getString("ip_address"),
-                rs.getLong("count"))).stream()
+    return clickHouseJdbcTemplate.query(sql, PreparedStatementSetter -> {
+          PreparedStatementSetter.setString(1, shortUrl);
+          PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
+          PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
+        }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
+            rs.getString("ip_address") == null ? "Unknown" : rs.getString("ip_address"),
+            rs.getLong("count"))).stream()
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1));
   }
 
@@ -100,17 +96,16 @@ public class EventRepository {
     String sql = """
         SELECT referred, count(*) as count
         FROM events
-        WHERE short_url = ? AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY referred
         """;
-    return clickHouseJdbcTemplate.query(
-            sql, PreparedStatementSetter -> {
-              PreparedStatementSetter.setString(1, shortUrl);
-              PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
-              PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
-            }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
-                rs.getString("referred") == null ? "Unknown" : rs.getString("referred"),
-                rs.getLong("count"))).stream()
+    return clickHouseJdbcTemplate.query(sql, PreparedStatementSetter -> {
+          PreparedStatementSetter.setString(1, shortUrl);
+          PreparedStatementSetter.setString(2, DateTimeUtils.formatToClickhouseFormat(start));
+          PreparedStatementSetter.setString(3, DateTimeUtils.formatToClickhouseFormat(end));
+        }, (rs, rowNum) -> new AbstractMap.SimpleEntry<>(
+            rs.getString("referred") == null ? "Unknown" : rs.getString("referred"),
+            rs.getLong("count"))).stream()
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1));
   }
 
@@ -118,8 +113,7 @@ public class EventRepository {
       String shortUrl, LocalDateTime start, LocalDateTime end) {
     String sql = """
         SELECT toDate(created_at) AS date, count(*) as count FROM events
-        WHERE short_url = ?
-        AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY date
         ORDER BY date DESC
         """;
@@ -135,8 +129,7 @@ public class EventRepository {
       String shortUrl, LocalDateTime start, LocalDateTime end) {
     String sql = """
         SELECT formatDateTime(created_at, '%e-%c-%y %k:00') as time, count(*) as count FROM events
-        WHERE short_url = ?
-        AND created_at BETWEEN ? AND ?
+        WHERE short_url = ? AND (created_at >= toDateTime(?,'UTC')) AND (created_at <= toDateTime(?,'UTC'))
         GROUP BY time
         """;
     return clickHouseJdbcTemplate.query(sql, PreparedStatementSetter -> {
