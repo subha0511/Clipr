@@ -1,9 +1,10 @@
-
 # URL Shortener Service
 
 ## Overview
 
-This repository contains a Spring Boot application that provides a URL shortener service with analytics and authentication features. The application supports shortening URLs, managing users, and generating insights on user interactions. 
+This repository contains a Spring Boot application that provides a URL shortener service with
+analytics and authentication features. The application supports shortening URLs, managing users, and
+generating insights on user interactions.
 
 ## Features
 
@@ -11,7 +12,7 @@ This repository contains a Spring Boot application that provides a URL shortener
 - Retrieve, list, and delete shortened URLs.
 - User authentication and token-based authorization (JWT with token rotation).
 - Advanced analytics:
-  - Events grouped by user agent, referrer, country, IP, and click intervals.
+    - Events grouped by user agent, referrer, country, IP, and click intervals.
 - Pagination and filtering support for retrieving URLs.
 
 ## Technologies Used
@@ -41,7 +42,8 @@ The API is documented using OpenAPI v3. Key features include:
 
 ### Analytics Endpoints
 
-- **`GET /analytics/user-agent/{shortUrl}`**: Get events grouped by user agent for a given short URL.
+- **`GET /analytics/user-agent/{shortUrl}`**: Get events grouped by user agent for a given short
+  URL.
 - **`GET /analytics/referrer/{shortUrl}`**: Get events grouped by referrer for a given short URL.
 - **`GET /analytics/ip/{shortUrl}`**: Get events grouped by IP address for a given short URL.
 - **`GET /analytics/country/{shortUrl}`**: Get events grouped by country for a given short URL.
@@ -66,7 +68,8 @@ The API is documented using OpenAPI v3. Key features include:
    ```
 
 2. Configure the application properties:
-   Update `application.yml` or `application.properties` with your database, Redis, and ClickHouse configurations.
+   Update `application.yml` or `application.properties` with your database, Redis, and ClickHouse
+   configurations.
 
 3. Build and run the application:
    ```bash
@@ -74,12 +77,27 @@ The API is documented using OpenAPI v3. Key features include:
    ```
 
 4. Access the application:
-   - API Base URL: `http://localhost:8080`
-   - OpenAPI Docs: `http://localhost:8080/swagger-ui.html`
+    - API Base URL: `http://localhost:8080`
+    - OpenAPI Docs: `http://localhost:8080/swagger-ui.html`
+
+## Running with Docker Compose
+
+To run the entire application stack (backend and databases) using Docker Compose:
+
+1. Ensure Docker is installed and running on your machine.
+2. Start the services:
+    ```bash
+    docker-compose up --build
+    ```
+3. Access the application:
+    ```bash
+    http://localhost:8080
+    ```
 
 ## Authentication
 
-The application uses **JWT Bearer Token Authentication** with token rotation. Users must provide an access token in the `Authorization` header for protected routes. Example:
+The application uses **JWT Bearer Token Authentication** with token rotation. Users must provide an
+access token in the `Authorization` header for protected routes. Example:
 
 ```http
 Authorization: Bearer <access_token>
@@ -90,13 +108,16 @@ Tokens can be refreshed using the `GET /auth/refresh` endpoint.
 ## Database Schema
 
 ### PostgreSQL (Main DB)
+
 - User table
 - URL table
 
 ### Redis (Cache)
+
 - URL cache for fast retrieval
 
 ### ClickHouse (Events DB)
+
 - Analytics tables for event tracking
 
 # Future Improvements
@@ -106,7 +127,8 @@ Tokens can be refreshed using the `GET /auth/refresh` endpoint.
 
 ## Contributions
 
-Contributions are welcome! Please create an issue or submit a pull request with your suggestions or changes.
+Contributions are welcome! Please create an issue or submit a pull request with your suggestions or
+changes.
 
 ## License
 
