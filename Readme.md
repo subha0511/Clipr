@@ -86,13 +86,13 @@ To run the entire application stack (backend and databases) using Docker Compose
 
 1. Ensure Docker is installed and running on your machine.
 2. Start the services:
+
     ```bash
     docker-compose up --build
     ```
 3. Access the application:
-    ```bash
-    http://localhost:8080
-    ```
+    - API Base URL: `http://localhost:8080`
+    - OpenAPI Docs: `http://localhost:8080/swagger-ui.html`
 
 ## Authentication
 
