@@ -31,4 +31,4 @@ COPY --from=builder /app/target/uri-0.0.1-SNAPSHOT.jar application.jar
 EXPOSE 8080
 
 # Set the entry point for the Spring Boot application
-ENTRYPOINT ["/usr/bin/wait-for-it", "postgres:5432", "--", "java", "-jar", "application.jar"]
+ENTRYPOINT ["/usr/bin/wait-for-it", "postgres:5432", "redis:6379", "clickhouse:8123", "--", "java", "-jar", "application.jar"]
