@@ -1,44 +1,60 @@
+
 spring:
+  application:
+    name: uri
 
   datasource:
-    url: DATABASE_URL
-    username: DATABASE_USERNAME
-    password: DATABASE_PASSWORD
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
-    hibernate:
-      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
     properties:
       hibernate:
+        generate-ddl: true
+        hbm2ddl:
+          auto: update
         physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-
-  redis:
-    host: DATABASE_URL
-    port: 6379
+        boot:
+          allow_jdbc_metadata_access: false
 
   cache:
     type: redis
 
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+      repositories.enabled: false
+
+
 clickhouse:
-  url: DATABASE_URL
-  username: DATABASE_USERNAME
-  password: DATABASE_PASSWORD
+  url: ${SPRING_CLICKHOUSE_URL}
+  username: ${SPRING_CLICKHOUSE_USERNAME}
+  password: ${SPRING_CLICKHOUSE_PASSWORD}
   driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
 
 jwt:
   secret:
-    access-expiration: 1800000
-    expiration: 1800000
-    refresh-expiration: 302400000
+    access-expiration: ACCESS_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS
+    expiration: EXPIRATION_TIME_IN_MILLISECONDS
+    refresh-expiration: REFRESH_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS
     access-key: ACCESS_KEY_SECRET
     refresh-key: REFRESH_KEY_SECRET
 
 cookie:
   token:
-    expiration: 604800
+    expiration: COOKIE_EXPIRATION_TIME_IN_SECONDS
 
 springdoc:
   api-docs:
     enabled: true
   swagger-ui:
     enabled: true
+
+logging.level.org.springframework:
+  web: DEBUG
+  data.redis: DEBUG

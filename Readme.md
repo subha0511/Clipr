@@ -99,6 +99,11 @@ Tokens can be refreshed using the `GET /auth/refresh` endpoint.
 ### ClickHouse (Events DB)
 - Analytics tables for event tracking
 
+# Future Improvements
+
+- Implement rate limiting for API endpoints.
+- Add support for custom short URLs and expiration time.
+
 ## Contributions
 
 Contributions are welcome! Please create an issue or submit a pull request with your suggestions or changes.
