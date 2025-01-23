@@ -2,6 +2,7 @@ package com.subha.uri.repository.clickhouse;
 
 import com.subha.uri.domain.entity.Event;
 import com.subha.uri.utils.DateTimeUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,6 +25,7 @@ public class EventRepository {
   private JdbcTemplate clickHouseJdbcTemplate;
 
   @Async
+  @Transactional
   public void save(Event event) {
     event.setId(UUID.randomUUID());
 
